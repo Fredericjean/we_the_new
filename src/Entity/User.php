@@ -2,8 +2,12 @@
 
 namespace App\Entity;
 
+use App\Entity\Order\Order;
+use App\Entity\Order\Payment;
 use App\Entity\Traits\DateTimeTrait;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -69,6 +73,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $birthDate = null;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
+    private Collection $orders;
+
+    /**
+     * @var Collection<int, Address>
+     */
+    #[ORM\ManyToMany(targetEntity: Address::class, mappedBy: 'user_id')]
+    private Collection $adress_id;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Address $default_adress_id = null;
+
+    /**
+     * @var Collection<int, Payment>
+     */
+    #[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'user')]
+    private Collection $payments;
+
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+        $this->adress_id = new ArrayCollection();
+        $this->payments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -194,6 +226,123 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBirthDate(?\DateTimeInterface $birthDate): static
     {
         $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function hasAddress(Address $address): bool
+    {
+        foreach ($this->adress_id as $userAddress) {
+            if (
+                $address->getAddress() === $userAddress->getAddress() &&
+                $address->getZipCode() === $userAddress->getZipCode() &&
+                $address->getCity() === $userAddress->getCity()
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return Collection<int, Address>
+     */
+    public function getAdressId(): Collection
+    {
+        return $this->adress_id;
+    }
+
+    public function addAdressId(Address $adressId): static
+    {
+        if ($this->default_adress_id ===null){
+            $this->setDefaultAdressId($adressId);
+
+        }
+        if (!$this->adress_id->contains($adressId)) {
+            $this->adress_id->add($adressId);
+            $adressId->addUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdressId(Address $adressId): static
+    {
+        if ($this->adress_id->removeElement($adressId)) {
+            $adressId->removeUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function getDefaultAdressId(): ?Address
+    {
+        return $this->default_adress_id;
+    }
+
+    public function setDefaultAdressId(?Address $default_adress_id): static
+    {
+        $this->default_adress_id = $default_adress_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Payment>
+     */
+    public function getPayments(): Collection
+    {
+        return $this->payments;
+    }
+
+    public function addPayment(Payment $payment): static
+    {
+        if (!$this->payments->contains($payment)) {
+            $this->payments->add($payment);
+            $payment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePayment(Payment $payment): static
+    {
+        if ($this->payments->removeElement($payment)) {
+            // set the owning side to null (unless already changed)
+            if ($payment->getUser() === $this) {
+                $payment->setUser(null);
+            }
+        }
 
         return $this;
     }
