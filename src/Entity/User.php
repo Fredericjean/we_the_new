@@ -34,6 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: 'L\'email ne peut pas dépasser {{ limit }} caractères.'
     )]
     #[Assert\NotBlank]
+    #[Assert\Email]
     private ?string $email = null;
 
     /**
@@ -66,8 +67,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 10, nullable: true)]
     #[Assert\Length(
-        max: 10,
-        maxMessage: 'Le numéro de téléphone ne peut pas dépasser {{ limit }} caractères.'
+        exactly: 10,
+        exactMessage: 'Le numéro de téléphone doit faire {{ limit }} caractères.'
     )]
     private ?string $phone = null;
 
