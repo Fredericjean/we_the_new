@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Order\Order;
 use Doctrine\ORM\QueryBuilder;
 use App\Entity\Order\OrderItem;
 use App\Entity\Product\ProductVariant;

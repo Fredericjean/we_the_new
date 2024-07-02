@@ -2,12 +2,10 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use App\Entity\Order\Order;
 use Symfony\Component\Form\AbstractType;
 use App\Form\EventListener\ClearCartListener;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Form\EventListener\RemoveItemCartListener;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
