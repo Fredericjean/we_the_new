@@ -6,4 +6,4 @@ App\Entity\Product\Product:
     name (unique): <word()>
     description: <sentence()>
     model: "@model_<current()>"
-    enable: <boolean()>
+    enable: true

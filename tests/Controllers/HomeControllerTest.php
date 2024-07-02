@@ -36,7 +36,7 @@ class HomeControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET','/');
 
-        $this->assertCount(1,$crawler->filter('.card-product'));
+        $this->assertCount(4,$crawler->filter('.card-product'));
     }
 
 
