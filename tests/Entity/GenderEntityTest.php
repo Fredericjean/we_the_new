@@ -3,7 +3,7 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Product\Gender;
-use App\Tests\Traits\testTrait;
+use App\Tests\Traits\TestTrait;
 use App\Repository\Product\GenderRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
